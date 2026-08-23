@@ -1,11 +1,14 @@
 import { useState } from 'react'
 import { purchaseVehicle } from '../services/vehicleService'
+import { useAuth } from '../context/AuthContext'
 
 function VehicleListPage({ vehicles = [] }) {
   const [make, setMake] = useState('')
   const [model, setModel] = useState('')
   const [category, setCategory] = useState('')
   const [maxPrice, setMaxPrice] = useState('')
+
+  const { isAdmin } = useAuth()
 
   const filteredVehicles = vehicles.filter((vehicle) => {
     const matchesMake =
@@ -38,6 +41,12 @@ function VehicleListPage({ vehicles = [] }) {
   return (
     <main>
       <h1>Vehicles</h1>
+
+      {isAdmin && (
+        <button type="button">
+          Add Vehicle
+        </button>
+      )}
 
       <section>
         <label htmlFor="make">Make</label>
