@@ -9,11 +9,17 @@ export function AuthProvider({ children }) {
 
   const isAuthenticated = Boolean(token)
 
+  const logout = () => {
+    localStorage.removeItem('token')
+    setToken(null)
+  }
+
   return (
     <AuthContext.Provider
       value={{
         token,
         isAuthenticated,
+        logout,
       }}
     >
       {children}
