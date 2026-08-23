@@ -1,4 +1,25 @@
+import { useState } from 'react'
+import { register } from '../services/authService'
+
 function RegisterPage() {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+  })
+
+  const handleChange = (event) => {
+    setFormData({
+      ...formData,
+      [event.target.id]: event.target.value,
+    })
+  }
+
+  const handleSubmit = async (event) => {
+    event.preventDefault()
+    await register(formData)
+  }
+
   return (
     <main className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
       <section className="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg">
@@ -6,7 +27,7 @@ function RegisterPage() {
           Create Account
         </h1>
 
-        <form className="space-y-5">
+        <form className="space-y-5" onSubmit={handleSubmit}>
           <div>
             <label
               htmlFor="name"
@@ -17,6 +38,8 @@ function RegisterPage() {
             <input
               id="name"
               type="text"
+              value={formData.name}
+              onChange={handleChange}
               className="w-full rounded-lg border border-gray-300 px-4 py-2.5 outline-none focus:border-blue-500"
             />
           </div>
@@ -31,6 +54,8 @@ function RegisterPage() {
             <input
               id="email"
               type="email"
+              value={formData.email}
+              onChange={handleChange}
               className="w-full rounded-lg border border-gray-300 px-4 py-2.5 outline-none focus:border-blue-500"
             />
           </div>
@@ -45,6 +70,8 @@ function RegisterPage() {
             <input
               id="password"
               type="password"
+              value={formData.password}
+              onChange={handleChange}
               className="w-full rounded-lg border border-gray-300 px-4 py-2.5 outline-none focus:border-blue-500"
             />
           </div>
