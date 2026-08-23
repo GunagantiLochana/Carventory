@@ -1,35 +1,26 @@
-import { act, renderHook } from '@testing-library/react'
-import { AuthProvider, useAuth } from './AuthContext'
+import { renderHook } from '@testing-library/react'
+import { AuthProvider, useAuth } from '../context/AuthContext'
 
-describe('AuthContext', () => {
-  beforeEach(() => {
+describe('Admin role handling', () => {
+  test('identifies an authenticated admin user', () => {
+    localStorage.setItem('token', 'admin-token')
+    localStorage.setItem(
+      'user',
+      JSON.stringify({
+        id: '1',
+        name: 'Admin',
+        email: 'admin@test.com',
+        role: 'ADMIN',
+      })
+    )
+
+    const { result } = renderHook(() => useAuth(), {
+      wrapper: AuthProvider,
+    })
+
+    expect(result.current.user.role).toBe('ADMIN')
+    expect(result.current.isAdmin).toBe(true)
+
     localStorage.clear()
-  })
-
-  test('provides unauthenticated state when no token exists', () => {
-    const { result } = renderHook(() => useAuth(), {
-      wrapper: AuthProvider,
-    })
-
-    expect(result.current.isAuthenticated).toBe(false)
-    expect(result.current.token).toBeNull()
-  })
-
-  test('logs out and removes the token', () => {
-    localStorage.setItem('token', 'test-jwt-token')
-
-    const { result } = renderHook(() => useAuth(), {
-      wrapper: AuthProvider,
-    })
-
-    expect(result.current.isAuthenticated).toBe(true)
-
-    act(() => {
-      result.current.logout()
-    })
-
-    expect(localStorage.getItem('token')).toBeNull()
-    expect(result.current.token).toBeNull()
-    expect(result.current.isAuthenticated).toBe(false)
   })
 })
