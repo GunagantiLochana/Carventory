@@ -68,6 +68,13 @@ function VehicleListPage({ vehicles = [] }) {
       <section>
         {filteredVehicles.map((vehicle) => (
           <article key={vehicle.id}>
+            {vehicle.imageUrl && (
+              <img
+                src={vehicle.imageUrl}
+                alt={`${vehicle.make} ${vehicle.model}`}
+              />
+            )}
+
             <h2>
               {vehicle.make} {vehicle.model}
             </h2>

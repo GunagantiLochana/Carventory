@@ -10,6 +10,7 @@ describe('VehicleListPage', () => {
       category: 'Sedan',
       price: 25000,
       quantity: 3,
+      imageUrl: 'https://example.com/camry.jpg',
     },
     {
       id: '2',
@@ -18,6 +19,7 @@ describe('VehicleListPage', () => {
       category: 'Sedan',
       price: 22000,
       quantity: 5,
+      imageUrl: 'https://example.com/civic.jpg',
     },
     {
       id: '3',
@@ -26,6 +28,7 @@ describe('VehicleListPage', () => {
       category: 'SUV',
       price: 60000,
       quantity: 2,
+      imageUrl: 'https://example.com/x5.jpg',
     },
   ]
 
@@ -37,6 +40,16 @@ describe('VehicleListPage', () => {
     expect(screen.getAllByText('Sedan')).toHaveLength(2)
     expect(screen.getByText('$25,000')).toBeInTheDocument()
     expect(screen.getByText('$22,000')).toBeInTheDocument()
+  })
+
+  test('renders vehicle images', () => {
+    render(<VehicleListPage vehicles={vehicles} />)
+
+    expect(screen.getByRole('img', { name: 'Toyota Camry' }))
+      .toHaveAttribute('src', 'https://example.com/camry.jpg')
+
+    expect(screen.getByRole('img', { name: 'Honda Civic' }))
+      .toHaveAttribute('src', 'https://example.com/civic.jpg')
   })
 
   test('filters vehicles by make', () => {
