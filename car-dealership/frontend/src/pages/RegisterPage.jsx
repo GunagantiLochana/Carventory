@@ -7,6 +7,9 @@ function RegisterPage() {
     email: '',
     password: '',
   })
+  const [message, setMessage] = useState('')
+  
+  const [error, setError] = useState('')
 
   const handleChange = (event) => {
     setFormData({
@@ -16,14 +19,34 @@ function RegisterPage() {
   }
 
   const handleSubmit = async (event) => {
-    event.preventDefault()
-    await register(formData)
+  event.preventDefault()
+
+  setMessage('')
+  setError('')
+
+  try {
+    const response = await register(formData)
+    setMessage(response.message)
+  } catch (error) {
+    setError(error.message)
   }
+}
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
       <section className="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg">
         <h1 className="mb-6 text-center text-3xl font-bold text-gray-900">
+            {message && (
+  <p className="mb-4 rounded-lg bg-green-100 p-3 text-center text-green-700">
+    {message}
+  </p>
+)}
+
+{error && (
+  <p className="mb-4 rounded-lg bg-red-100 p-3 text-center text-red-700">
+    {error}
+  </p>
+)}
           Create Account
         </h1>
 

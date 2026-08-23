@@ -8,11 +8,7 @@ vi.mock('../services/authService', () => ({
 }))
 
 describe('RegisterPage', () => {
-  it('should submit registration details', async () => {
-    register.mockResolvedValue({ message: 'Registration successful' })
-
-    render(<RegisterPage />)
-
+  const fillForm = () => {
     fireEvent.change(screen.getByLabelText(/name/i), {
       target: { value: 'John Doe' },
     })
@@ -24,6 +20,14 @@ describe('RegisterPage', () => {
     fireEvent.change(screen.getByLabelText(/password/i), {
       target: { value: 'Password123!' },
     })
+  }
+
+  it('should submit registration details', async () => {
+    register.mockResolvedValue({ message: 'Registration successful' })
+
+    render(<RegisterPage />)
+
+    fillForm()
 
     fireEvent.click(
       screen.getByRole('button', { name: /register/i })
@@ -36,5 +40,39 @@ describe('RegisterPage', () => {
         password: 'Password123!',
       })
     })
+  })
+
+  it('should display a success message after registration', async () => {
+    register.mockResolvedValue({
+      message: 'Registration successful',
+    })
+
+    render(<RegisterPage />)
+
+    fillForm()
+
+    fireEvent.click(
+      screen.getByRole('button', { name: /register/i })
+    )
+
+    expect(
+      await screen.findByText(/registration successful/i)
+    ).toBeInTheDocument()
+  })
+
+  it('should display an error message when registration fails', async () => {
+    register.mockRejectedValue(new Error('Email already exists'))
+
+    render(<RegisterPage />)
+
+    fillForm()
+
+    fireEvent.click(
+      screen.getByRole('button', { name: /register/i })
+    )
+
+    expect(
+      await screen.findByText(/email already exists/i)
+    ).toBeInTheDocument()
   })
 })
