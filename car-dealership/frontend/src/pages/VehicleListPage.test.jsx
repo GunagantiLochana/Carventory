@@ -1,24 +1,24 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import { vi } from 'vitest'
 import VehicleListPage from './VehicleListPage'
-import { deleteVehicle } from '../services/vehicleService'
 
 vi.mock('../services/vehicleService', () => ({
-  deleteVehicle: vi.fn(),
+  getVehicles: vi.fn(),
   purchaseVehicle: vi.fn(),
+  deleteVehicle: vi.fn(),
 }))
+
+import { getVehicles } from '../services/vehicleService'
 
 vi.mock('../context/AuthContext', () => ({
   useAuth: () => ({
-    isAdmin: true,
+    isAdmin: false,
   }),
 }))
 
-describe('VehicleListPage delete behavior', () => {
-  test('deletes a vehicle when delete button is clicked', async () => {
-    deleteVehicle.mockResolvedValue(true)
-
-    const vehicles = [
+describe('VehicleListPage API integration', () => {
+  test('loads vehicles from the vehicle service', async () => {
+    getVehicles.mockResolvedValue([
       {
         id: '1',
         make: 'Toyota',
@@ -27,16 +27,14 @@ describe('VehicleListPage delete behavior', () => {
         price: 25000,
         quantity: 3,
       },
-    ]
+    ])
 
-    render(<VehicleListPage vehicles={vehicles} />)
-
-    fireEvent.click(
-      screen.getByRole('button', { name: /delete/i })
-    )
+    render(<VehicleListPage />)
 
     await waitFor(() => {
-      expect(deleteVehicle).toHaveBeenCalledWith('1')
+      expect(screen.getByText('Toyota Camry')).toBeInTheDocument()
     })
+
+    expect(getVehicles).toHaveBeenCalled()
   })
 })

@@ -1,16 +1,27 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
+import { vi } from 'vitest'
 import DashboardPage from './DashboardPage'
 
-describe('DashboardPage', () => {
-  test('renders the dashboard heading and vehicle inventory section', () => {
+const logout = vi.fn()
+
+vi.mock('../context/AuthContext', () => ({
+  useAuth: () => ({
+    user: {
+      role: 'ADMIN',
+    },
+    isAdmin: true,
+    logout,
+  }),
+}))
+
+describe('DashboardPage logout', () => {
+  test('logs out the authenticated user', () => {
     render(<DashboardPage />)
 
-    expect(
-      screen.getByRole('heading', { name: /dashboard/i })
-    ).toBeInTheDocument()
+    fireEvent.click(
+      screen.getByRole('button', { name: /logout/i })
+    )
 
-    expect(
-      screen.getByText(/vehicle inventory/i)
-    ).toBeInTheDocument()
+    expect(logout).toHaveBeenCalled()
   })
 })

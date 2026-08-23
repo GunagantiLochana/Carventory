@@ -1,14 +1,27 @@
-import { useState } from 'react'
-import { purchaseVehicle, deleteVehicle } from '../services/vehicleService'
+import { useEffect, useState } from 'react'
+import {
+  getVehicles,
+  purchaseVehicle,
+  deleteVehicle,
+} from '../services/vehicleService'
 import { useAuth } from '../context/AuthContext'
 
-function VehicleListPage({ vehicles = [] }) {
+function VehicleListPage({ vehicles: initialVehicles }) {
+  const [vehicles, setVehicles] = useState(initialVehicles || [])
   const [make, setMake] = useState('')
   const [model, setModel] = useState('')
   const [category, setCategory] = useState('')
   const [maxPrice, setMaxPrice] = useState('')
 
   const { isAdmin } = useAuth()
+
+  useEffect(() => {
+    if (initialVehicles !== undefined) {
+      return
+    }
+
+    getVehicles().then(setVehicles)
+  }, [initialVehicles])
 
   const filteredVehicles = vehicles.filter((vehicle) => {
     const matchesMake =

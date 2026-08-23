@@ -1,12 +1,27 @@
+import { useAuth } from '../context/AuthContext'
+
 function DashboardPage() {
+  const { user, isAdmin, logout } = useAuth()
+
   return (
     <main>
       <h1>Dashboard</h1>
 
-      <section>
-        <h2>Vehicle Inventory</h2>
-        <p>Browse available vehicles.</p>
-      </section>
+      {user && (
+        <p>
+          Role: {user.role}
+        </p>
+      )}
+
+      {isAdmin && (
+        <button type="button">
+          Add Vehicle
+        </button>
+      )}
+
+      <button type="button" onClick={logout}>
+        Logout
+      </button>
     </main>
   )
 }
