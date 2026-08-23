@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { purchaseVehicle } from '../services/vehicleService'
 
 function VehicleListPage({ vehicles = [] }) {
   const [make, setMake] = useState('')
@@ -29,6 +30,10 @@ function VehicleListPage({ vehicles = [] }) {
       matchesPrice
     )
   })
+
+  const handlePurchase = async (vehicleId) => {
+    await purchaseVehicle(vehicleId)
+  }
 
   return (
     <main>
@@ -84,6 +89,14 @@ function VehicleListPage({ vehicles = [] }) {
             <p>${vehicle.price.toLocaleString('en-US')}</p>
 
             <p>In stock: {vehicle.quantity}</p>
+
+            <button
+              type="button"
+              onClick={() => handlePurchase(vehicle.id)}
+              disabled={vehicle.quantity === 0}
+            >
+              Purchase
+            </button>
           </article>
         ))}
       </section>
