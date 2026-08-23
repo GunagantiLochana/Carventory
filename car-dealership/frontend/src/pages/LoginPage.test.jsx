@@ -32,4 +32,42 @@ describe('LoginPage', () => {
       })
     })
   })
+
+  test('shows success message after successful login', async () => {
+    login.mockResolvedValue({
+      message: 'Login successful',
+    })
+
+    render(<LoginPage />)
+
+    fireEvent.change(screen.getByLabelText(/email/i), {
+      target: { value: 'test@example.com' },
+    })
+
+    fireEvent.change(screen.getByLabelText(/password/i), {
+      target: { value: 'password123' },
+    })
+
+    fireEvent.click(screen.getByRole('button', { name: /login/i }))
+
+    expect(await screen.findByText('Login successful')).toBeInTheDocument()
+  })
+
+  test('shows error message when login fails', async () => {
+    login.mockRejectedValue(new Error('Invalid credentials'))
+
+    render(<LoginPage />)
+
+    fireEvent.change(screen.getByLabelText(/email/i), {
+      target: { value: 'test@example.com' },
+    })
+
+    fireEvent.change(screen.getByLabelText(/password/i), {
+      target: { value: 'password123' },
+    })
+
+    fireEvent.click(screen.getByRole('button', { name: /login/i }))
+
+    expect(await screen.findByText('Invalid credentials')).toBeInTheDocument()
+  })
 })

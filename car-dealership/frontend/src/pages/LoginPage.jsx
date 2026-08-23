@@ -4,14 +4,25 @@ import { login } from '../services/authService'
 function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [message, setMessage] = useState('')
+  const [error, setError] = useState('')
 
   const handleSubmit = async (event) => {
     event.preventDefault()
 
-    await login({
-      email,
-      password,
-    })
+    setMessage('')
+    setError('')
+
+    try {
+      const response = await login({
+        email,
+        password,
+      })
+
+      setMessage(response.message)
+    } catch (error) {
+      setError(error.message)
+    }
   }
 
   return (
@@ -35,6 +46,9 @@ function LoginPage() {
       />
 
       <button type="submit">Login</button>
+
+      {message && <p>{message}</p>}
+      {error && <p>{error}</p>}
     </form>
   )
 }
