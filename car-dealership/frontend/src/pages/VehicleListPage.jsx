@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { purchaseVehicle } from '../services/vehicleService'
+import { purchaseVehicle, deleteVehicle } from '../services/vehicleService'
 import { useAuth } from '../context/AuthContext'
 
 function VehicleListPage({ vehicles = [] }) {
@@ -36,6 +36,10 @@ function VehicleListPage({ vehicles = [] }) {
 
   const handlePurchase = async (vehicleId) => {
     await purchaseVehicle(vehicleId)
+  }
+
+  const handleDelete = async (vehicleId) => {
+    await deleteVehicle(vehicleId)
   }
 
   return (
@@ -106,6 +110,15 @@ function VehicleListPage({ vehicles = [] }) {
             >
               Purchase
             </button>
+
+            {isAdmin && (
+              <button
+                type="button"
+                onClick={() => handleDelete(vehicle.id)}
+              >
+                Delete
+              </button>
+            )}
           </article>
         ))}
       </section>

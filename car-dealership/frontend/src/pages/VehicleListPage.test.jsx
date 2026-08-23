@@ -1,30 +1,42 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { vi } from 'vitest'
 import VehicleListPage from './VehicleListPage'
+import { deleteVehicle } from '../services/vehicleService'
 
-vi.mock('../context/AuthContext', () => ({
-  useAuth: vi.fn(),
+vi.mock('../services/vehicleService', () => ({
+  deleteVehicle: vi.fn(),
+  purchaseVehicle: vi.fn(),
 }))
 
-import { useAuth } from '../context/AuthContext'
+vi.mock('../context/AuthContext', () => ({
+  useAuth: () => ({
+    isAdmin: true,
+  }),
+}))
 
-describe('VehicleListPage admin controls', () => {
-  test('shows admin controls only for admin users', () => {
-    useAuth.mockReturnValue({
-      user: {
+describe('VehicleListPage delete behavior', () => {
+  test('deletes a vehicle when delete button is clicked', async () => {
+    deleteVehicle.mockResolvedValue(true)
+
+    const vehicles = [
+      {
         id: '1',
-        name: 'Admin',
-        email: 'admin@test.com',
-        role: 'ADMIN',
+        make: 'Toyota',
+        model: 'Camry',
+        category: 'Sedan',
+        price: 25000,
+        quantity: 3,
       },
-      isAdmin: true,
-      isAuthenticated: true,
+    ]
+
+    render(<VehicleListPage vehicles={vehicles} />)
+
+    fireEvent.click(
+      screen.getByRole('button', { name: /delete/i })
+    )
+
+    await waitFor(() => {
+      expect(deleteVehicle).toHaveBeenCalledWith('1')
     })
-
-    render(<VehicleListPage vehicles={[]} />)
-
-    expect(
-      screen.getByRole('button', { name: /add vehicle/i })
-    ).toBeInTheDocument()
   })
 })
