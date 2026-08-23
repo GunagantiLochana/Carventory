@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
 function AppHeader() {
@@ -5,6 +6,12 @@ function AppHeader() {
   const user = auth?.user
   const isAdmin = auth?.isAdmin ?? false
   const logout = auth?.logout ?? (() => {})
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    logout()
+    navigate('/login')
+  }
 
   return (
     <header className="border-b border-slate-200 bg-white">
@@ -65,7 +72,7 @@ function AppHeader() {
 
           <button
             type="button"
-            onClick={logout}
+            onClick={handleLogout}
             className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
           >
             Logout

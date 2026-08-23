@@ -1,11 +1,16 @@
 import { useState } from 'react'
-import { login } from '../services/authService'
+import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
+import { login as loginApi } from '../services/authService'
 
 function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
+
+  const navigate = useNavigate()
+  const { login: loginUser } = useAuth()
 
   const handleSubmit = async (event) => {
     event.preventDefault()
@@ -14,17 +19,31 @@ function LoginPage() {
     setError('')
 
     try {
-      const response = await login({
+      console.log('LOGIN: submitting')
+
+      const response = await loginApi({
         email,
         password,
       })
 
-      if (response.token) {
-        localStorage.setItem('token', response.token)
-      }
+      console.log('LOGIN: API response received', response)
 
-      setMessage(response.message)
+      if (response.token && response.user) {
+        console.log('LOGIN: updating AuthContext')
+
+        loginUser(response.token, response.user)
+
+        console.log('LOGIN: navigating to dashboard')
+
+        navigate('/dashboard')
+
+        console.log('LOGIN: navigate called')
+      } else {
+        console.log('LOGIN: missing token or user')
+        setError('Login response did not contain authentication data.')
+      }
     } catch (error) {
+      console.error('LOGIN: failed', error)
       setError(error.message)
     }
   }
@@ -32,7 +51,6 @@ function LoginPage() {
   return (
     <main className="min-h-screen bg-slate-950 flex items-center justify-center px-4 py-10">
       <section className="w-full max-w-md">
-        {/* Brand */}
         <div className="mb-8 text-center">
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-600 text-2xl font-bold text-white shadow-lg shadow-blue-600/30">
             C
@@ -47,7 +65,6 @@ function LoginPage() {
           </p>
         </div>
 
-        {/* Login Card */}
         <form
           onSubmit={handleSubmit}
           className="rounded-2xl border border-slate-800 bg-white p-8 shadow-2xl"
@@ -63,7 +80,6 @@ function LoginPage() {
           </div>
 
           <div className="space-y-5">
-            {/* Email */}
             <div>
               <label
                 htmlFor="email"
@@ -81,7 +97,6 @@ function LoginPage() {
               />
             </div>
 
-            {/* Password */}
             <div>
               <label
                 htmlFor="password"
@@ -99,7 +114,6 @@ function LoginPage() {
               />
             </div>
 
-            {/* Submit */}
             <button
               type="submit"
               className="w-full rounded-lg bg-blue-600 px-4 py-3 font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700 active:scale-[0.99]"
@@ -108,21 +122,18 @@ function LoginPage() {
             </button>
           </div>
 
-          {/* Success */}
           {message && (
             <p className="mt-5 rounded-lg bg-green-50 px-4 py-3 text-sm text-green-700">
               {message}
             </p>
           )}
 
-          {/* Error */}
           {error && (
             <p className="mt-5 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
               {error}
             </p>
           )}
 
-          {/* Register */}
           <p className="mt-6 text-center text-sm text-slate-500">
             Don't have an account?{' '}
             <a
