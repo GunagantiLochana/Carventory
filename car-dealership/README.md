@@ -314,3 +314,7 @@ Never commit:
 - `.env` files containing secrets
 
 For local testing, use development-only accounts and credentials.
+![alt text](image.png)
+![alt text](image-1.png)
+![alt text](image-2.png)
+![alt text](image-3.png)
