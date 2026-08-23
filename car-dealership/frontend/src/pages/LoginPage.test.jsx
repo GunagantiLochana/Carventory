@@ -10,6 +10,7 @@ vi.mock('../services/authService', () => ({
 describe('LoginPage', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    localStorage.clear()
   })
 
   test('calls login service with entered email and password', async () => {
@@ -69,5 +70,28 @@ describe('LoginPage', () => {
     fireEvent.click(screen.getByRole('button', { name: /login/i }))
 
     expect(await screen.findByText('Invalid credentials')).toBeInTheDocument()
+  })
+
+  test('stores JWT token in localStorage after successful login', async () => {
+    login.mockResolvedValue({
+      token: 'test-jwt-token',
+      message: 'Login successful',
+    })
+
+    render(<LoginPage />)
+
+    fireEvent.change(screen.getByLabelText(/email/i), {
+      target: { value: 'test@example.com' },
+    })
+
+    fireEvent.change(screen.getByLabelText(/password/i), {
+      target: { value: 'password123' },
+    })
+
+    fireEvent.click(screen.getByRole('button', { name: /login/i }))
+
+    await waitFor(() => {
+      expect(localStorage.getItem('token')).toBe('test-jwt-token')
+    })
   })
 })

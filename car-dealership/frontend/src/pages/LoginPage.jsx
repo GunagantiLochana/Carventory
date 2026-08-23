@@ -19,6 +19,10 @@ function LoginPage() {
         password,
       })
 
+      if (response.token) {
+        localStorage.setItem('token', response.token)
+      }
+
       setMessage(response.message)
     } catch (error) {
       setError(error.message)
